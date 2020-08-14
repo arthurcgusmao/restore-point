@@ -1,9 +1,17 @@
 # Restore Point
 
 `restore-point-mode` is a global minor mode that allows you to restore the
-point position after one or a sequence of specific commands were executed.
+cursor position after one or a sequence of specific commands were executed.
 
-## Short Description
+## Motivation
+
+The functionality implemented herein is especially helpful when scroll commands
+moved the point from where you had it in the first place, or if you mistakenly
+executed some command (such as mark-whole-buffer) that moved the point position
+and you want to restore it. Or, yet, if there is any command that moves the
+point position that you want to be able to easily restore.
+
+## How it works
 
 When the minor mode is active and you execute `keyboard-quit` (usually bound to
 `C-g` or `ESC` keychords) after a sequence of mark or scroll commands (or any
@@ -13,15 +21,19 @@ previous location.
 
 ## Installation & Usage
 
-This package is going to be submitted to MELPA. Until then, please add
-`restore-point.el` to your Emacs load path so that it can be required in your
-initialization code.
-
-Require package and enable the minor mode:
-
+Add `restore-point.el` to your Emacs load path, require the package and enable
+the minor mode:
 ```lisp
 (require 'restore-point)
 (restore-point-mode 1)
+```
+
+Alternatively, using [straight.el](https://github.com/raxod502/straight.el) and
+[use-package](https://github.com/jwiegley/use-package):
+```lisp
+(use-package restore-point
+  :straight (:host github :repo "arthurcgusmao/restore-point")
+  :hook (after-init . restore-point-mode))
 ```
 
 ### Further configurations
@@ -45,13 +57,11 @@ adding new commands (or completely setting its values to your liking), e.g.:
 (restore-point-mode 1)
 ```
 
-## Motivation
+## License
 
-The functionality implemented herein is especially helpful when scroll commands
-moved the point from where you had it in the first place, or if you mistakenly
-executed some command (such as mark-whole-buffer) that moved the point position
-and you want to restore it. Or, yet, if there is any command that moves the
-point position that you want to be able to easily restore.
+This software is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 3, or (at your option) any later version.
 
 ## Acknowledgements
 
@@ -60,4 +70,3 @@ author alone as a custom function; however, the code herein was further
 improved and refactored as a package by adapting code and ideas from
 [`smart-mark.el`](https://github.com/zhangkaiyulw/smart-mark/blob/master/smart-mark.el),
 a very similar package with similar purpose developed by Kai Yu.
-
