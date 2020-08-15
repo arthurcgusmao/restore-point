@@ -57,6 +57,12 @@ adding new commands (or completely setting its values to your liking), e.g.:
 (restore-point-mode 1)
 ```
 
+In addition, the package provides a `rp/point-ring-nav-previous` function, to
+quickly restore a previous point location by navigating the history backwards.
+Since this command is added to `rp/restore-point-commands`, pressing
+`keyboard-quit` during the backward search returns the cursor to the recentmost
+location, thus 'resetting' the search.
+
 ## License
 
 This software is free software; you can redistribute it and/or modify it under
