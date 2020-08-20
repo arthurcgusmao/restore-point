@@ -79,7 +79,8 @@ to `rp/point-ring' before being called.")
   (interactive)
   ;; Add current point position to ring
   (let ((marker (copy-marker (point-marker))))
-    (unless (= marker (nth 0 rp/point-ring))
+    (when (or (not rp/point-ring)
+              (/= marker (nth 0 rp/point-ring))) ; Prevent duplication
       (setq rp/point-ring (cons marker rp/point-ring))))
   ;; Discard oldest elements if ring limit has been exceeded
   (when (> (length rp/point-ring) rp/point-ring-max)
