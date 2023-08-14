@@ -95,7 +95,7 @@ to `rp/point-ring' before being called.")
 (defun rp/point-ring-nav-previous ()
   "Navigates the `rp/point-ring' backwards."
   (interactive)
-  (if (eq this-command last-command)
+  (if (eq real-this-command real-last-command)
       (setq rp/nav-nth (1+ rp/nav-nth))
     (setq rp/nav-nth 1))
   (let ((marker (nth rp/nav-nth rp/point-ring)))
@@ -108,9 +108,9 @@ to `rp/point-ring' before being called.")
   "Push point position to ring when transitioning to a
 restore-point command from an ordinary one. To be added to
 `pre-command-hook' list when activating this minor mode."
-  (when (and (not (eq this-command last-command))
-             (memq this-command rp/restore-point-commands)
-             (not (memq last-command rp/restore-point-commands)))
+  (when (and (not (eq real-this-command real-last-command))
+             (memq real-this-command rp/restore-point-commands)
+             (not (memq real-last-command rp/restore-point-commands)))
     (rp/push-point-ring)))
 
 ;; Restore point advice function
@@ -118,7 +118,7 @@ restore-point command from an ordinary one. To be added to
   "Restore point position if last command in
 `rp/restore-point-commands' list. To be added as advice to
 `keyboard-quit' when activating this minor mode."
-  (when (memq last-command rp/restore-point-commands)
+  (when (memq real-last-command rp/restore-point-commands)
     (rp/restore-point-position)))
 
 
