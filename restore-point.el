@@ -1,4 +1,4 @@
-;;; restore-point.el --- Restore point position after mark or scroll functions
+;;; restore-point.el --- Restore point position after mark or scroll functions -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019 Arthur Colombini Gusmão
 
