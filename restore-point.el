@@ -90,7 +90,8 @@ to `rp/point-ring' before being called.")
 (defun rp/restore-point-position ()
   "Restore most recent point position from ring."
   (interactive)
-  (goto-char (nth 0 rp/point-ring)))
+  (and rp/point-ring
+       (goto-char (nth 0 rp/point-ring))))
 
 (defun rp/point-ring-nav-previous ()
   "Navigates the `rp/point-ring' backwards."
