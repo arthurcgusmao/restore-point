@@ -52,7 +52,7 @@ positions of the current buffer, most recent first.")
 Start discarding off end if gets this big.")
 
 (defvar rp/restore-point-commands
-  '[beginning-of-buffer
+  '(beginning-of-buffer
     end-of-buffer
     mark-defun
     mark-page
@@ -70,8 +70,8 @@ Start discarding off end if gets this big.")
     scroll-other-window-down
     scroll-up scroll-down
     scroll-up-command
-    rp/point-ring-nav-previous]
-  "Vector of commands for which the point position will be pushed
+    rp/point-ring-nav-previous)
+  "List of commands for which the point position will be pushed
 to `rp/point-ring' before being called.")
 
 (defun rp/push-point-ring ()
@@ -110,8 +110,8 @@ to `rp/point-ring' before being called.")
 restore-point command from an ordinary one. To be added to
 `pre-command-hook' list when activating this minor mode."
   (when (and (not (eq real-this-command real-last-command))
-             (cl-find real-this-command rp/restore-point-commands)
-             (not (cl-find real-last-command rp/restore-point-commands)))
+             (memq real-this-command rp/restore-point-commands)
+             (not (memq real-last-command rp/restore-point-commands)))
     (rp/push-point-ring)))
 
 ;; Restore point advice function
@@ -119,7 +119,7 @@ restore-point command from an ordinary one. To be added to
   "Restore point position if last command in
 `rp/restore-point-commands' list. To be added as advice to
 `keyboard-quit' when activating this minor mode."
-  (when (cl-find real-last-command rp/restore-point-commands)
+  (when (memq real-last-command rp/restore-point-commands)
     (rp/restore-point-position)))
 
 
