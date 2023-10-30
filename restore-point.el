@@ -109,7 +109,7 @@ to `rp/point-ring' before being called."
 (defun rp/point-ring-nav-previous ()
   "Navigates the `rp/point-ring' backwards."
   (interactive)
-  (if (eq real-this-command real-last-command)
+  (if (eq this-command last-command)
       (setq rp/nav-nth (1+ rp/nav-nth))
     (setq rp/nav-nth 1))
   (let ((marker (nth rp/nav-nth rp/point-ring)))
