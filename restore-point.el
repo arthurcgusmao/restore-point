@@ -44,7 +44,8 @@
 
 ;; Code:
 
-(defgroup restore-point
+(defgroup restore-point nil
+  "Restore position after `keyboard-quit'."
   :link '(url-link :tag "Homepage"
           "https://github.com/arthurcgusmao/restore-point")
   :group 'convenience
