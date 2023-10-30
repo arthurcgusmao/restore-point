@@ -44,14 +44,22 @@
 
 ;; Code:
 
+(defgroup restore-point
+  :link '(url-link :tag "Homepage"
+          "https://github.com/arthurcgusmao/restore-point")
+  :group 'convenience
+  :prefix "rp/")
+
 (defvar-local rp/point-ring nil "List of former point
 positions of the current buffer, most recent first.")
 (put 'rp/point-ring 'permanent-local t)
 
-(defvar rp/point-ring-max 128 "Maximum size of point ring.
-Start discarding off end if gets this big.")
+(defcustom rp/point-ring-max 128 "Maximum size of point ring.
+Start discarding off end if gets this big."
+  :type 'natnum
+  :group 'restore-point)
 
-(defvar rp/restore-point-commands
+(defcustom rp/restore-point-commands
   '(beginning-of-buffer
     end-of-buffer
     mark-defun
@@ -72,7 +80,9 @@ Start discarding off end if gets this big.")
     scroll-up-command
     rp/point-ring-nav-previous)
   "List of commands for which the point position will be pushed
-to `rp/point-ring' before being called.")
+to `rp/point-ring' before being called."
+  :type '(repeat symbol)
+  :group 'restore-point)
 
 (defun rp/push-point-ring ()
   "Push current point position to point ring."
