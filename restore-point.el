@@ -128,7 +128,7 @@ restore-point command from an ordinary one. To be added to
     (rp/push-point-ring)))
 
 ;; Restore point advice function
-(defun rp/cond-restore-point (&rest args)
+(defun rp/cond-restore-point (&rest _)
   "Restore point position if last command in
 `rp/restore-point-commands' list. To be added as advice to
 `keyboard-quit' when activating this minor mode."
