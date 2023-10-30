@@ -84,6 +84,9 @@ to `rp/point-ring' before being called."
   :type '(repeat symbol)
   :group 'restore-point)
 
+(defvar rp/nav-nth 1
+  "Current index for navigation with `rp/point-ring-nav-previous'.")
+
 (defun rp/push-point-ring ()
   "Push current point position to point ring."
   (interactive)
