@@ -42,7 +42,7 @@
 ;; Kai Yu, which can be found in
 ;; https://github.com/zhangkaiyulw/smart-mark/blob/master/smart-mark.el
 
-;; Code:
+;;; Code:
 
 (defgroup restore-point nil
   "Restore position after `keyboard-quit'."
@@ -51,8 +51,8 @@
   :group 'convenience
   :prefix "rp/")
 
-(defvar-local rp/point-ring nil "List of former point
-positions of the current buffer, most recent first.")
+(defvar-local rp/point-ring nil
+  "List of former point positions of the current buffer, most recent first.")
 (put 'rp/point-ring 'permanent-local t)
 
 (defcustom rp/point-ring-max 128 "Maximum size of point ring.
@@ -80,8 +80,7 @@ Start discarding off end if gets this big."
     scroll-up scroll-down
     scroll-up-command
     rp/point-ring-nav-previous)
-  "List of commands for which the point position will be pushed
-to `rp/point-ring' before being called."
+  "Commands that push the point position to `rp/point-ring' before execution."
   :type '(repeat symbol)
   :group 'restore-point)
 
