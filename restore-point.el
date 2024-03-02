@@ -68,7 +68,7 @@ Start discarding off end if gets this big."
     mark-paragraph
     mark-sexp
     mark-whole-buffer
-    mark-work
+    mark-word
     mwheel-scroll
     scroll-bar-drag
     scroll-bar-scroll-down
