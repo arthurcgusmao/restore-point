@@ -1,4 +1,4 @@
-;;; restore-point.el --- Restore point position after mark or scroll functions -*- lexical-binding: t; -*-
+;;; restore-point.el --- Restore point position after mark or scroll functions -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2019 Arthur Colombini Gusmão
 
@@ -42,16 +42,25 @@
 ;; Kai Yu, which can be found in
 ;; https://github.com/zhangkaiyulw/smart-mark/blob/master/smart-mark.el
 
-;; Code:
+;;; Code:
 
-(defvar-local rp/point-ring nil "List of former point
-positions of the current buffer, most recent first.")
+(defgroup restore-point nil
+  "Restore position after `keyboard-quit'."
+  :link '(url-link :tag "Homepage"
+          "https://github.com/arthurcgusmao/restore-point")
+  :group 'convenience
+  :prefix "rp/")
+
+(defvar-local rp/point-ring nil
+  "List of former point positions of the current buffer, most recent first.")
 (put 'rp/point-ring 'permanent-local t)
 
-(defvar rp/point-ring-max 128 "Maximum size of point ring.
-Start discarding off end if gets this big.")
+(defcustom rp/point-ring-max 128 "Maximum size of point ring.
+Start discarding off end if gets this big."
+  :type 'natnum
+  :group 'restore-point)
 
-(defvar rp/restore-point-commands
+(defcustom rp/restore-point-commands
   '(beginning-of-buffer
     end-of-buffer
     mark-defun
@@ -71,8 +80,12 @@ Start discarding off end if gets this big.")
     scroll-up scroll-down
     scroll-up-command
     rp/point-ring-nav-previous)
-  "List of commands for which the point position will be pushed
-to `rp/point-ring' before being called.")
+  "Commands that push the point position to `rp/point-ring' before execution."
+  :type '(repeat symbol)
+  :group 'restore-point)
+
+(defvar rp/nav-nth 1
+  "Current index for navigation with `rp/point-ring-nav-previous'.")
 
 (defun rp/push-point-ring ()
   "Push current point position to point ring."
@@ -90,7 +103,8 @@ to `rp/point-ring' before being called.")
 (defun rp/restore-point-position ()
   "Restore most recent point position from ring."
   (interactive)
-  (goto-char (nth 0 rp/point-ring)))
+  (and rp/point-ring
+       (goto-char (nth 0 rp/point-ring))))
 
 (defun rp/point-ring-nav-previous ()
   "Navigates the `rp/point-ring' backwards."
@@ -108,17 +122,17 @@ to `rp/point-ring' before being called.")
   "Push point position to ring when transitioning to a
 restore-point command from an ordinary one. To be added to
 `pre-command-hook' list when activating this minor mode."
-  (when (and (not (eq this-command last-command))
-             (memq this-command rp/restore-point-commands)
-             (not (memq last-command rp/restore-point-commands)))
+  (when (and (not (eq real-this-command real-last-command))
+             (memq real-this-command rp/restore-point-commands)
+             (not (memq real-last-command rp/restore-point-commands)))
     (rp/push-point-ring)))
 
 ;; Restore point advice function
-(defun rp/cond-restore-point (&rest args)
+(defun rp/cond-restore-point (&rest _)
   "Restore point position if last command in
 `rp/restore-point-commands' list. To be added as advice to
 `keyboard-quit' when activating this minor mode."
-  (when (memq last-command rp/restore-point-commands)
+  (when (memq real-last-command rp/restore-point-commands)
     (rp/restore-point-position)))
 
 
