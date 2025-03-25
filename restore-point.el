@@ -60,6 +60,9 @@ Start discarding off end if gets this big."
   :type 'natnum
   :group 'restore-point)
 
+(defvar rp/commands-table (make-hash-table :test 'eq)
+  "Hash table of commands that should trigger point restoration.")
+
 (defcustom rp/restore-point-commands
   '(beginning-of-buffer
     end-of-buffer
@@ -82,7 +85,17 @@ Start discarding off end if gets this big."
     rp/point-ring-nav-previous)
   "Commands that push the point position to `rp/point-ring' before execution."
   :type '(repeat symbol)
-  :group 'restore-point)
+  :group 'restore-point
+  :set (lambda (symbol value)
+         (set-default symbol value)
+         (when (bound-and-true-p restore-point-mode)
+           (rp/build-commands-table))))
+
+(defun rp/build-commands-table ()
+  "Rebuild the hash table of commands from `rp/restore-point-commands'."
+  (clrhash rp/commands-table)
+  (dolist (cmd rp/restore-point-commands)
+    (puthash cmd t rp/commands-table)))
 
 (defvar rp/nav-nth 1
   "Current index for navigation with `rp/point-ring-nav-previous'.")
@@ -123,8 +136,8 @@ Start discarding off end if gets this big."
 restore-point command from an ordinary one. To be added to
 `pre-command-hook' list when activating this minor mode."
   (when (and (not (eq real-this-command real-last-command))
-             (memq real-this-command rp/restore-point-commands)
-             (not (memq real-last-command rp/restore-point-commands)))
+             (gethash real-this-command rp/commands-table)
+             (not (gethash real-last-command rp/commands-table)))
     (rp/push-point-ring)))
 
 ;; Restore point advice function
@@ -132,7 +145,7 @@ restore-point command from an ordinary one. To be added to
   "Restore point position if last command in
 `rp/restore-point-commands' list. To be added as advice to
 `keyboard-quit' when activating this minor mode."
-  (when (memq real-last-command rp/restore-point-commands)
+  (when (gethash real-last-command rp/commands-table)
     (rp/restore-point-position)))
 
 
@@ -143,12 +156,14 @@ predefined (usually scroll or mark) commands are executed."
   :global t
   (if restore-point-mode
       (progn
+        (rp/build-commands-table)
         (add-hook 'pre-command-hook 'rp/pre-command)
         (advice-add #'keyboard-quit
                     :before #'rp/cond-restore-point))
     (progn
       (remove-hook 'pre-command-hook 'rp/pre-command)
-      (advice-remove 'keyboard-quit #'rp/cond-restore-point))))
+      (advice-remove 'keyboard-quit #'rp/cond-restore-point)
+      (clrhash rp/commands-table))))
 
 (provide 'restore-point)
 ;;; restore-point.el ends here
